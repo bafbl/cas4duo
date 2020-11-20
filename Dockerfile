@@ -1,9 +1,11 @@
 FROM adoptopenjdk/openjdk11:alpine-slim AS overlay
 
 RUN mkdir -p cas-overlay
-COPY ./src cas-overlay/src/
 COPY ./gradle/ cas-overlay/gradle/
-COPY ./gradlew ./settings.gradle ./build.gradle ./gradle.properties /cas-overlay/
+COPY ./gradlew /cas-overlay
+RUN  cd /cas-overlay &&  ./gradlew --version;
+
+COPY ./settings.gradle ./build.gradle ./gradle.properties /cas-overlay/
 
 RUN mkdir -p ~/.gradle \
     && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties \
@@ -14,6 +16,10 @@ RUN mkdir -p ~/.gradle \
 
 RUN cd cas-overlay \
     && ./gradlew clean build --parallel --no-daemon;
+
+COPY ./src cas-overlay/src/
+RUN cd cas-overlay \
+    && ./gradlew build --parallel --no-daemon;
 
 FROM adoptopenjdk/openjdk11:alpine-jre AS cas
 
