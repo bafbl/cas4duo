@@ -73,25 +73,6 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
         final String originalPassword) throws GeneralSecurityException {
 
-        if (this.users == null || this.users.isEmpty()) {
-            throw new FailedLoginException("No user can be accepted because none is defined");
-        }
-        val username = credential.getUsername();
-        val cachedPassword = this.users.get(username);
-        if (cachedPassword == null) {
-            LOGGER.debug("[{}] was not found in the map.", username);
-            throw new AccountNotFoundException(username + " not found in backing map.");
-        }
-        if (!StringUtils.equals(credential.getPassword(), cachedPassword)) {
-            throw new FailedLoginException();
-        }
-        val strategy = getPasswordPolicyHandlingStrategy();
-        if (strategy != null && StringUtils.isNotBlank(username)) {
-            LOGGER.debug("Attempting to examine and handle password policy via [{}]", strategy.getClass().getSimpleName());
-            val principal = this.principalFactory.createPrincipal(username);
-            val messageList = strategy.handle(principal, getPasswordPolicyConfiguration());
-            return createHandlerResult(credential, principal, messageList);
-        }
-        throw new FailedLoginException("Unable to authenticate " + credential.getId());
+        return createHandlerResult(credential, principalFactory.createPrincipal(credential.getUsername()));
     }
 }

@@ -50,6 +50,12 @@ repositories {
         mavenContent { snapshotsOnly() }
         url "https://oss.jfrog.org/artifactory/oss-snapshot-local" 
     }
+    maven { 
+        url "https://dl.bintray.com/uniconiam/maven"
+    }
+    maven { 
+        url "https://jitpack.io"
+    }
 }
 
 def casServerVersion = project.'cas.version'
@@ -85,6 +91,7 @@ dependencies {
     implementation "org.apereo.cas:cas-server-core-api-authentication:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-core-configuration-api:${casServerVersion}"
     implementation "org.apereo.cas:cas-server-core-authentication-api:${casServerVersion}"
+    compile "org.apereo.cas:cas-server-support-duo:${project.'cas.version'}"
 }
 
 tasks.findByName("jibDockerBuild")

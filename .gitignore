@@ -1,3 +1,4 @@
+*.secretenv
 .classpath
 !/.project
 .project
